@@ -3,8 +3,8 @@ package com.example.SonderMatch;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.example.SonderMatch.db.User;
-import com.example.SonderMatch.db.UserRepository;
+import com.example.SonderMatch.model.User;
+import com.example.SonderMatch.repository.UserRepository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

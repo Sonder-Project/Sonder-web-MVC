@@ -1,5 +1,6 @@
-package com.example.SonderMatch.db;
+package com.example.SonderMatch.security.services;
 
+import com.example.SonderMatch.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

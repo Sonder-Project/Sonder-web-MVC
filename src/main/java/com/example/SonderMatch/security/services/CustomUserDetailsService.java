@@ -1,5 +1,7 @@
-package com.example.SonderMatch.db;
+package com.example.SonderMatch.security.services;
 
+import com.example.SonderMatch.repository.UserRepository;
+import com.example.SonderMatch.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

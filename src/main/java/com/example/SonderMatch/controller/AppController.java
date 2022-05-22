@@ -1,11 +1,10 @@
 package com.example.SonderMatch.controller;
 
-import com.example.SonderMatch.db.UserRepository;
-import com.example.SonderMatch.db.User;
+import com.example.SonderMatch.repository.UserRepository;
+import com.example.SonderMatch.model.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -41,7 +40,7 @@ public class AppController {
     return ("<h1>private</h1>");
   }
 
-  @PostMapping("/process_register")
+  @PostMapping("/api/auth/signup")
   public String proccessRegister(@RequestBody User user){
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     String encodedPassword = passwordEncoder.encode(user.getPassword());

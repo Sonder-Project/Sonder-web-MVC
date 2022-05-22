@@ -1,4 +1,4 @@
-package com.example.SonderMatch.db;
+package com.example.SonderMatch.model;
 
 
 import javax.persistence.*;

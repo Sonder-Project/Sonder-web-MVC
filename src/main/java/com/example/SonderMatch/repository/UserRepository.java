@@ -1,5 +1,6 @@
-package com.example.SonderMatch.db;
+package com.example.SonderMatch.repository;
 
+import com.example.SonderMatch.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

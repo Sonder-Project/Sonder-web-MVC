@@ -1,6 +1,6 @@
-package com.example.SonderMatch.config;
+package com.example.SonderMatch.security;
 
-import com.example.SonderMatch.db.CustomUserDetailsService;
+import com.example.SonderMatch.security.services.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
