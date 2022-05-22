@@ -2,14 +2,19 @@ package com.example.SonderMatch.model;
 
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
+
 
 @Entity
 @Table(name="users")
 public class User {
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
+  @Column(nullable = false, unique = true, length = 20)
+  private String username;
 
   @Column(nullable = false, unique = true, length = 45)
   private String email;
@@ -23,11 +28,26 @@ public class User {
   @Column(name = "last_name", nullable = false, length = 20)
   private String lastName;
 
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(name="user_roles",
+      joinColumns = @JoinColumn(name="user_id"),
+      inverseJoinColumns = @JoinColumn(name="role_id")
+  )
   @Column(name="roles", nullable = false, length = 20)
-  private String roles;
+  private Set<Role> roles = new HashSet<>();
 
   @Column(name="active", nullable = true)
   private boolean active;
+
+  public User(){
+  }
+
+  public String getUsername() {
+    return username;
+  }
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
   public Long getId() {
     return id;
@@ -69,11 +89,10 @@ public class User {
     this.lastName = lastName;
   }
 
-  public String getRoles() {
+  public Set<Role> getRoles() {
     return roles;
   }
-
-  public void setRoles(String roles) {
+  public void setRoles(Set<Role> roles) {
     this.roles = roles;
   }
 
