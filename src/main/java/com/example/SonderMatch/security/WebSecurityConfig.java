@@ -1,63 +1,68 @@
 package com.example.SonderMatch.security;
 
+import com.example.SonderMatch.security.jwt.AuthEntryPointJwt;
+import com.example.SonderMatch.security.jwt.AuthTokenFilter;
 import com.example.SonderMatch.security.services.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.sql.DataSource;
 
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(
+    //securedEnabled = true,
+    //jsr250Enabled = true,
+    prePostEnabled = true
+)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   @Autowired
-  private DataSource dataSource;
+  CustomUserDetailsService customUserDetailsService;
+
+  @Autowired
+  private AuthEntryPointJwt unauthorizedHandler;
 
   @Bean
-  public UserDetailsService userDetailsService() {
-    return new CustomUserDetailsService();
+  public AuthTokenFilter authenticationJwtTokenFilter() {
+    return new AuthTokenFilter();
   }
 
   @Bean
-  public DaoAuthenticationProvider authenticationProvider() {
-    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-    authProvider.setUserDetailsService(userDetailsService());
-    authProvider.setPasswordEncoder(passwordEncoder());
-    return authProvider;
+  @Override
+  public AuthenticationManager authenticationManagerBean() throws Exception {
+    return super.authenticationManagerBean();
   }
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    http.authorizeRequests()
-        .antMatchers("/private").authenticated()
-        .antMatchers("/admin").hasRole("ADMIN")
-        .antMatchers("/user").hasAnyRole("USER", "ADMIN")
-        .antMatchers("/process_register").permitAll()
-        .antMatchers("/").permitAll()
-        .and()
-        .formLogin()
-          .usernameParameter("email")
-          .defaultSuccessUrl("/success")
-          .permitAll()
-        .and()
-        .logout().logoutSuccessUrl("/").permitAll();
-    http.csrf().disable();                       // TODO -- security
-    http.cors();
+    http.cors().and().csrf().disable()// TODO -- security
+        .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+        .authorizeRequests().antMatchers("/api/auth/**").permitAll()
+        .antMatchers("/api/test/**").permitAll()
+        .anyRequest().authenticated();
+    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
   }
 
   @Override
-  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    auth.jdbcAuthentication()
-        .dataSource(dataSource);
+  protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+    authenticationManagerBuilder.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder());
+
     /*
     auth.authenticationProvider(authenticationProvider());
     PasswordEncoder passwordEncoder = passwordEncoder();

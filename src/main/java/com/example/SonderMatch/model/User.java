@@ -22,6 +22,7 @@ public class User {
   @Column(nullable = false, length = 64)
   private String password;
 
+
   @Column(name = "first_name", nullable = false, length=20)
   private String firstName;
 
@@ -33,7 +34,6 @@ public class User {
       joinColumns = @JoinColumn(name="user_id"),
       inverseJoinColumns = @JoinColumn(name="role_id")
   )
-  @Column(name="roles", nullable = false, length = 20)
   private Set<Role> roles = new HashSet<>();
 
   @Column(name="active", nullable = true)
@@ -41,6 +41,14 @@ public class User {
 
   public User(){
   }
+  public User(String firstName, String lastName, String username, String email, String password) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.username = username;
+    this.email = email;
+    this.password = password;
+  }
+
 
   public String getUsername() {
     return username;

@@ -8,7 +8,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-// Tells Spring Security how to look up the user information
+import javax.transaction.Transactional;
+
+// Tells Spring Security how to look up the user information (gets UserDetails object)
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -16,11 +18,10 @@ public class CustomUserDetailsService implements UserDetailsService {
   private UserRepository userRepo;
 
   @Override
+  @Transactional
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    User user = userRepo.findByEmail(username);
-    if (user == null) {
-      throw new UsernameNotFoundException("User not found");
-    }
-    return new CustomUserDetails(user);
+    User user = userRepo.findByUsername(username)
+        .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
+    return CustomUserDetails.build(user);
   }
 }

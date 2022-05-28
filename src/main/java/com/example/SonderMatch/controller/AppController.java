@@ -4,6 +4,7 @@ import com.example.SonderMatch.repository.UserRepository;
 import com.example.SonderMatch.model.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,32 +21,26 @@ public class AppController {
     return ("<h1>home</h1>");
   }
 
+  @GetMapping("/all")
+  public String allAccess() {
+    return "Public Content.";
+  }
+
   @GetMapping("/user")
-  public String user() {
-    return ("<h1>user</h1>");
+  @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+  public String userAccess() {
+    return "User Content.";
   }
-
+  @GetMapping("/mod")
+  @PreAuthorize("hasRole('MODERATOR')")
+  public String moderatorAccess() {
+    return "Moderator Board.";
+  }
   @GetMapping("/admin")
-  public String admin() {
-    return ("<h1>admmin</h1>");
+  @PreAuthorize("hasRole('ADMIN')")
+  public String adminAccess() {
+    return "Admin Board.";
   }
 
-  @GetMapping("/success")
-  public String success() {
-    return ("<h1>successr</h1>");
-  }
 
-  @GetMapping("/private")
-  public String privateUrl() {
-    return ("<h1>private</h1>");
-  }
-
-  @PostMapping("/api/auth/signup")
-  public String proccessRegister(@RequestBody User user){
-    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    String encodedPassword = passwordEncoder.encode(user.getPassword());
-    user.setPassword(encodedPassword);
-    userRepo.save(user);
-    return "register_success";
-  }
 }
